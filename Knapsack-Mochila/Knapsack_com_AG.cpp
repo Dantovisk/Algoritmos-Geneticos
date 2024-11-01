@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 
-#define POP_SEX 100
-#define POP_ASSEX 100
+#define POP_SEX 100     //populacao que fara fornicacoes
+#define POP_ASSEX 100   //populacao assexuada
 #define GENES_MUT 2
 
 using namespace std;
@@ -118,6 +118,11 @@ void treinamento(vector<vector<bool>> &individuos, int nItems, vector <bool> &be
 
             int k = avaliacao(individuos, nItems, bestIndiv, bestFit, pesoMax, peso, valor);
             cout<<"Geracao "<<i+1<<" - Melhor fit da geracao: "<<k<<" - Melhor ever: "<<*bestFit<<"\n";
+            ofstream outFile("dados.txt", ios::app);  // abre o arquivo para anexar
+            if(outFile.is_open()) {
+                outFile << i+1 << " " << *bestFit << "\n";  // salva a geração e o melhor fit
+            }
+            outFile.close();
         }
             
     }
