@@ -1,16 +1,19 @@
 #include <bits/stdc++.h>
+#include <fstream>
 
 using namespace std;
 
 class TwoSAT {
 private:
     int numVars;
-    unordered_map<string, int> varMap; //Hashmap dicionario de variaveis
     vector<vector<int>> implications, implicationsT; //lista de adjascencia para resolver 2SAT com kosaraju
-    vector<int> assignment;
     vector<bool> visited;
     vector<int> parentComponent;
     stack <int> kosarajuStack;
+
+    vector<int> assignment;
+    unordered_map<string, int> varMap; //Hashmap dicionario de variaveis
+
 
     void dfs1(int u){
         visited[u] = true;
@@ -51,7 +54,7 @@ public:
     // construtor da classe TwoSAT
     // implications tem o dobro de tamanho considerando 
     // que cada variavel tem sua correspondente negada
-     TwoSAT(int n) : numVars(n), implications(2 * n), implicationsT(2 * n), visited(2 * n, false) {}
+    TwoSAT(int n) : numVars(n), implications(2 * n), implicationsT(2 * n), visited(2 * n, false) {}
 
     void addClause(const string& var1, bool reau1, const string& var2, bool reau2){
         int id1 = getVarIndex(var1) * 2 + !reau1;
@@ -93,24 +96,63 @@ public:
             assignment[i] = (parentComponent[2 * i] > parentComponent[2 * i + 1]);
         }
         return true;
+    }
 
+    vector<int> getAssignment() const {
+        return assignment;
     }
 };
 
-int main(){
-    TwoSAT solver(3); // 3 variáveis: x, y, z
+// Função para gerar uma variável aleatória "x1", "x2", ...
+string generateRandomVariable(int n) {
+    int varIdx = rand() % n;
+    return "x" + to_string(varIdx + 1);
+}
 
-    solver.addClause("x", true, "y", true);   // x OR y
-    solver.addClause("x", false, "z", true);  // ¬x OR z
-    solver.addClause("y", false, "z", true);  // ¬y OR z
-    solver.addClause("z", false, "x", true);  // ¬z OR x
+// Função para gerar arquivos de entrada e saída
+void generateTestCases(int numCases) {
+    for (int t = 0; t < numCases; ++t) {
+        int n = rand() % (10 + t) + 1;     // Número de variáveis (1 a 10)
+        int m = rand() % (20 + 5*t) + 1;     // Número de cláusulas (1 a 20)
 
-    bool result = solver.solve();
-    if (result) {
-        cout << "Existe solução!" << endl;
-    } else {
-        cout << "Não há solução!" << endl;
+        TwoSAT solver(n);
+
+        // Arquivo de saída para o caso t
+        ofstream outFile("testcase_" + to_string(t + 1) + ".txt");
+
+        outFile << n << " " << m << endl;
+
+        for (int i = 0; i < m; ++i) {
+            string var1 = generateRandomVariable(n);
+            string var2 = generateRandomVariable(n);
+            bool reau1 = rand() % 2;
+            bool reau2 = rand() % 2;
+
+            solver.addClause(var1, reau1, var2, reau2);
+
+            outFile << var1 << " " << reau1 << " " << var2 << " " << reau2 << endl;
+        }
+
+        bool hasSolution = solver.solve();
+        if (hasSolution) {
+            outFile << "SIM" << endl;
+            auto assignment = solver.getAssignment();
+            for (int i = 0; i < n; ++i) {
+                outFile << "x" << (i + 1) << "=" << assignment[i] << " ";
+            }
+            outFile << endl;
+        } else {
+            outFile << "NÃO" << endl;
+        }
+
+        outFile.close();
     }
+}
 
+int main() {
+    srand(time(0));
+    int numCases = 50; // Número de casos de teste que queremos gerar
+    generateTestCases(numCases);
+    cout << "Casos de teste gerados!" << endl;
     return 0;
 }
