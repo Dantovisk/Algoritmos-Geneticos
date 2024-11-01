@@ -101,7 +101,8 @@ void randomizador(vector<vector<bool>> &individuos, int nItems)
 void treinamento(vector<vector<bool>> &individuos, int nItems, vector <bool> &bestIndiv, 
     int *bestFit, int pesoMax, vector <int> &peso, vector <int> &valor)
 {
-    
+
+    int contador = 0;
     while(1){
         cout<<"Digite o numero de geracoes (0 para sair):\n";
         int n; cin>>n;
@@ -117,13 +118,14 @@ void treinamento(vector<vector<bool>> &individuos, int nItems, vector <bool> &be
             individuos = mutacao(individuos, nItems, bestIndiv);
 
             int k = avaliacao(individuos, nItems, bestIndiv, bestFit, pesoMax, peso, valor);
-            cout<<"Geracao "<<i+1<<" - Melhor fit da geracao: "<<k<<" - Melhor ever: "<<*bestFit<<"\n";
+            cout<<"Geracao "<<contador+i+1<<" - Melhor fit da geracao: "<<k<<" - Melhor ever: "<<*bestFit<<"\n";
             ofstream outFile("dados.txt", ios::app);  // abre o arquivo para anexar
             if(outFile.is_open()) {
-                outFile << i+1 << " " << *bestFit << "\n";  // salva a geração e o melhor fit
+                outFile << contador+i+1 << " " << *bestFit << "\n";  // salva a geração e o melhor fit
             }
             outFile.close();
         }
+        contador += n;
             
     }
 }
@@ -165,8 +167,10 @@ int avaliacao(vector<vector<bool>> &individuos, int nItems, vector <bool> &bestI
     return melhorVivo;
 }
 
-
 int main(){
+    // Limpa o arquivo ao iniciar o programa
+    std::ofstream outFile("dados.txt", std::ios::trunc);
+    outFile.close();  
 
     int nItems, pesoMax, bestFit = 0;
     cin>>nItems>>pesoMax;
