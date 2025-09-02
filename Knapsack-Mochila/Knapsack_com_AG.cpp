@@ -1,8 +1,10 @@
 #include <bits/stdc++.h>
 
-#define POP_SEX 100     //populacao que fara fornicacoes
-#define POP_ASSEX 100   //populacao assexuada
-#define GENES_MUT 2
+#define POP_SEX 0     //populacao que fara fornicacoes
+#define POP_ASSEX 5   //populacao assexuada
+#define GENES_MUT 1
+
+long long media = 0;
 
 using namespace std;
 
@@ -121,7 +123,7 @@ void treinamento(vector<vector<bool>> &individuos, int nItems, vector <bool> &be
             cout<<"Geracao "<<contador+i+1<<" - Melhor fit da geracao: "<<k<<" - Melhor ever: "<<*bestFit<<"\n";
             ofstream outFile("dados.txt", ios::app);  // abre o arquivo para anexar
             if(outFile.is_open()) {
-                outFile << contador+i+1 << " " << *bestFit << "\n";  // salva a geração e o melhor fit
+                outFile << contador+i+1 << " " << *bestFit<<" " << media<<"\n";  // salva a geração e o melhor fit
             }
             outFile.close();
         }
@@ -138,6 +140,7 @@ int avaliacao(vector<vector<bool>> &individuos, int nItems, vector <bool> &bestI
     random_device rd;  
     mt19937 gen(rd()); // Mersenne Twister engine
     uniform_int_distribution<> distrib(0, nItems-1);
+    media = 0;
     
     for(int i=0; i<POP_SEX + POP_ASSEX; i++){
         int pesoAtual = 0, valorAtual =0;
@@ -158,12 +161,14 @@ int avaliacao(vector<vector<bool>> &individuos, int nItems, vector <bool> &bestI
             }
         }
         melhorVivo = max (melhorVivo, valorAtual);
+        media += valorAtual;
         
         if(valorAtual > *bestFit){
             bestIndiv = individuos[i];
             *bestFit = valorAtual;
         }
     }
+    media /= (POP_SEX + POP_ASSEX);
     return melhorVivo;
 }
 

@@ -3,7 +3,7 @@
 
 #define NITEMS 200
 #define MAXW 100000
-#define MAXVAL 1000000
+#define MAXVAL 100000
 
 using namespace std;
 
